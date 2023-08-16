@@ -1,0 +1,52 @@
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Plate } from 'src/Management/interfaces/plate.interface';
+import { PlateManagementDTO } from 'src/Management/plateManagement/plateManagement.dto';
+
+@Injectable()
+export class PlateManagementService {
+  constructor(@InjectModel('Plate') private readonly plateModel: Model<Plate>) {}
+  // fetch all users
+  async getAllPlates(): Promise<Plate[]> {
+    const plates = await this.plateModel
+      .find()
+      .exec();
+    return plates;
+  }
+  // Get a single user
+  async getPlate(plateID): Promise<Plate> {
+    const plate = await this.plateModel.findById(plateID).exec();
+    return plate;
+  }
+  // post a single User
+  async addPlate(plateManagementDTO: PlateManagementDTO): Promise<Plate> {
+    const newPlate = await new this.plateModel(plateManagementDTO);
+    return newPlate.save();
+  }
+  // Edit User details
+//   async updatePlate(
+//     plateID,
+//     plateManagementDTO: PlateManagementDTO,
+//   ): Promise<Plate> {
+//     const updatedPlate = await this.plateModel.findByIdAndUpdate(
+//       plateID,
+//       plateManagementDTO,
+//       { new: true },
+//     );
+//     return updatedPlate;
+//   }
+  async editPlate(plateID, plateManagementDTO: PlateManagementDTO): Promise<Plate> {
+    const editPlate = await this.plateModel.findByIdAndUpdate(
+      plateID,
+      plateManagementDTO,
+      { new: true },
+    );
+    return editPlate;
+  }
+  // Delete a User
+  async deletePlate(plateID): Promise<any> {
+    const deletedPlate = await this.plateModel.findOneAndDelete(plateID);
+    return deletedPlate;
+  }
+}

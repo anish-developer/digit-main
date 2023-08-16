@@ -1,0 +1,36 @@
+import { Model } from 'mongoose';
+import { Plate } from 'src/SellerModule/interfaces/plate.interface';
+import { Order } from 'src/SellerModule/interfaces/orderDetails.interface';
+import { User } from 'src/SellerModule/interfaces/user.interface';
+import { Purchase } from 'src/BuyerModule/interface/prchase.interface';
+import { PlateManagementDTO } from 'src/SellerModule/plateManagement/plateManagement.dto';
+import { Session } from 'src/BuyerModule/interface/session.interface';
+import { SendGridService } from 'src/sendgrid/sendgrid.service';
+export declare class PlateManagementService {
+    private readonly plateModel;
+    private readonly userModel;
+    private readonly orderModel;
+    private readonly purcahseModel;
+    private readonly sessionModel;
+    private sendGridService;
+    constructor(plateModel: Model<Plate>, userModel: Model<User>, orderModel: Model<Order>, purcahseModel: Model<Purchase>, sessionModel: Model<Session>, sendGridService: SendGridService);
+    getAllPlates(res: any): Promise<Plate[]>;
+    GetAllPlates(): Promise<Plate[]>;
+    countallplates(options: any): Promise<number>;
+    getallbidcount(options: any): Promise<number>;
+    getallsellcount(options: any): Promise<number>;
+    getPlate(res: any, plateID: any): Promise<Plate>;
+    addPlate(res: any, plateManagementDTO: PlateManagementDTO): Promise<Plate>;
+    editPlate(res: any, plateID: any, plateManagementDTO: PlateManagementDTO): Promise<Plate>;
+    deletePlate(res: any, plateID: any): Promise<any>;
+    uploadFile(res: any, body: any): Promise<any>;
+    editAsk(res: any, plateID: any, PlateManagementDTO: PlateManagementDTO): Promise<Plate>;
+    sell_Pending(res: any, userID: any): Promise<Plate>;
+    reUploadImage(res: any, plateID: any, plateManagementDTO: PlateManagementDTO): Promise<Plate>;
+    getHighestBid(res: any, plate_number: any): Promise<Order>;
+    getHighest(plate_number: string): Promise<Purchase[]>;
+    getLowest(plate_number: string): Promise<Purchase[]>;
+    getPlatesByUserID(res: any, user_id: any): Promise<Plate[]>;
+    staticPages(res: any): Promise<any>;
+    getAllPlatess(res: any): Promise<any>;
+}

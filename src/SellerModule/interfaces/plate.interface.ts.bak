@@ -1,0 +1,13 @@
+import { Document } from 'mongoose';
+
+export interface Plate extends Document {
+  plate_Number: string;
+  name: string;
+  price: string;
+  email: string;
+  phone: string;
+  status: string;
+  sell_status: string;
+  seller_level: string;
+  created_at: Date;
+}

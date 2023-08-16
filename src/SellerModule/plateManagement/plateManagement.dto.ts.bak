@@ -1,0 +1,14 @@
+import { IsNotEmpty, IsString } from 'class-validator';
+export class PlateManagementDTO {
+  plate_Number: string;
+  name: string;
+  price: string;
+  @IsNotEmpty({ message: 'Email Required' })
+  @IsString()
+  email: string;
+  phone: string;
+  status: string;
+  sell_status: string;
+  seller_level: string;
+  created_at: Date;
+}

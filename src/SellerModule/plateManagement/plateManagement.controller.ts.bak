@@ -1,0 +1,108 @@
+import {
+  Controller,
+  Get,
+  Res,
+  HttpStatus,
+  Post,
+  Body,
+  Put,
+  Query,
+  NotFoundException,
+  Delete,
+  Param,
+} from '@nestjs/common';
+import { PlateManagementService } from 'src/SellerModule/plateManagement/plateMangement.service';
+import { PlateManagementDTO } from 'src/SellerModule/plateManagement/plateManagement.dto';
+import { CommonMethods } from 'src/utilities/common-methods';
+var base64ToImage = require('base64-to-image');
+
+@Controller('plates')
+export class PlateManagementController {
+  constructor(private plateManagementService: PlateManagementService) {}
+
+  // add a plate
+  @Post('/add_plate')
+  async addPlate(@Res() res, @Body() plateManagementDTO: PlateManagementDTO) {
+    const plate = await this.plateManagementService.addPlate(
+      res,
+      plateManagementDTO,
+    );
+  }
+
+  // Retrieve plate list
+  @Get('/getAllPlates')
+  async getAllPlates(@Res() res) {
+    const plates = await this.plateManagementService.getAllPlates(res);
+  }
+
+  // Fetch a particular plate using ID
+  @Get('plate/:plateID')
+  async getPlate(@Res() res, @Param('plateID') plateID) {
+    const plate = await this.plateManagementService.getPlate(res, plateID);
+  }
+  @Put('/editPlate')
+  async editPlate(
+    @Res() res,
+    @Query('plateID') plateID,
+    @Body() plateManagementDTO: PlateManagementDTO,
+  ) {
+    const plate = await this.plateManagementService.editPlate(
+      res,
+      plateID,
+      plateManagementDTO,
+    );
+  }
+  // @Put('/update')
+  // async updateplate(@Res() res, @Query('plateID') plateID, @Body() plateManagementDTO: PlateManagementDTO) {
+  //     const plate = await this.plateManagementService.updateplate(plateID, plateManagementDTO);
+  //     if (!plate) throw new NotFoundException('plate does not exist!');
+  //     return res.status(HttpStatus.OK).json({
+  //         message: 'plate has been successfully updated',
+  //         plate
+  //     });
+  // }
+
+  // Delete a plate
+  @Delete('/delete')
+  async deletePlate(@Res() res, @Query('plateID') plateID) {
+    const plate = await this.plateManagementService.deletePlate(res, plateID);
+  }
+
+  @Get('/count_list')
+  async GetAllPlates(@Res() res) {
+    const users = await this.plateManagementService.GetAllPlates();
+    const totalplates = await this.plateManagementService.countallplates(users);
+    const onbid = await this.plateManagementService.getallbidcount(users);
+    const onsell = await this.plateManagementService.getallsellcount(users);
+
+    return res.status(HttpStatus.OK).json({ totalplates, onbid, onsell });
+  }
+
+  @Post('upload_image')
+  async uploadeFile(@Body() body, @Res() res) {
+    if (body.file) {
+      var base64Str = body.file;
+      var path = './uploads/plate/';
+      var optionalObj = {
+        fileName: '',
+        type: base64Str.split(';')[0].split('/')[1],
+      };
+      var imageInfo = base64ToImage(base64Str, path, optionalObj);
+
+      var filePath = `http://${process.env.HOST}:${process.env.PORT}/plateManagement/uploads/plate/${imageInfo.fileName}`;
+      return CommonMethods.success(
+        res,
+        'Image uploaded successfully',
+        filePath,
+      );
+    } else {
+      return CommonMethods.error(res, 'Image not uploaded');
+    }
+  }
+
+  // get image
+  @Get('uploads/plate/:filename')
+  getProfileImage(@Param('filename') filename, @Res() res) {
+    return res.sendFile(filename, { root: 'uploads/plate' });
+  }
+}
